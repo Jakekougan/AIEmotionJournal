@@ -8,12 +8,15 @@ const root = ReactDOM.createRoot(el);
 
 function App() {
   return (
-    <form>
+    <form className="newEntryForm" action="http://127.0.0.1:5000/data" method="GET">
       <div>
-        <input onClick={Log_ButtonClick()} name="inputField" type="text" placeholder="Type something..." />
+        <input type="text" placeholder="Enter your name" name='data' />
       </div>
       <div>
-        <button>Click Me!</button>
+        <button type="submit">Submit!</button>
+      </div>
+      <div>
+        <button type="button" onClick={() => root.render(<HelloWorld />)}>Go to Hello World</button>
       </div>
     </form>
 
@@ -30,6 +33,19 @@ function Log_ButtonClick() {
     <button onClick={handleClick}>Log Click</button>
   );
 }
+
+
+function HelloWorld() {
+  return (
+    <div>
+      <h1>Hello, World!</h1>
+      <button onClick={() => root.render(<App />)}>Go Back</button>
+
+    </div>
+  );
+}
+
+
 root.render(
   <React.StrictMode>
     <App />
