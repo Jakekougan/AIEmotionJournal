@@ -45,18 +45,17 @@ class EmotionBiLSTM(torch.nn.Module):
 
 def inference(model, text, tokenizer):
     encoded = tokenizer(
-    text.tolist(),
-    padding="max_length",
-    truncation=True,
-    max_length=64,
-    return_tensors="pt"
+        text,
+        padding="max_length",
+        truncation=True,
+        max_length=64,
+        return_tensors="pt"
     )
 
-    input_ids = encoded['input_ids'].tolist()
-    attention_mask = encoded['attention_mask'].tolist()
+    input_ids = encoded['input_ids']
+    attention_mask = encoded['attention_mask']
 
     output = model(input_ids=input_ids, attention_mask=attention_mask)
-
 
     return labelMap.get(output.argmax(dim=1).item(), "Unknown Emotion")
 
@@ -80,7 +79,7 @@ print("Downloading model...")
 
 try:
     # Load the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+    tokenizer = AutoTokenizer.from_pretrained("model\\tokenizer")
 except Exception as e:
     print(f"Error loading tokenizer: {e}")
 
@@ -89,7 +88,7 @@ except Exception as e:
 
 
 #Create instance of model
-model = EmotionBiLSTM(28732, 250, 64, 13)
+model = EmotionBiLSTM(28996, 275, 64, 13)
 
 # Load the weights
 
@@ -98,12 +97,11 @@ try:
     model.load_state_dict(torch.load("model\\emotion_model.pt"))
     model.eval()  # Set to evaluation mode
 
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
-
     print("Model Download Successful!")
 
 except Exception as e:
     print(f"Error loading model weights: {e}")
+
 
 
 
