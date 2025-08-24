@@ -2,6 +2,7 @@ import torch
 from torch.nn import Embedding, LSTM, Linear, Dropout, LayerNorm, GELU, LogSoftmax
 from transformers import AutoTokenizer
 import time
+import os
 
 
 #custom model
@@ -17,7 +18,19 @@ class EmotionBiLSTM(torch.nn.Module):
 
         self.act = torch.nn.GELU()
 
-
+        self.labelMap = {0: 'happiness',
+                         1: 'neutral',
+                         2: 'sadness',
+                         3: 'surprise',
+                         4: 'love',
+                         5: 'fear',
+                         6: 'confusion',
+                         7: 'disgust',
+                         8: 'desire',
+                         9: 'shame',
+                         10: 'sarcasm',
+                         11: 'anger',
+                         12: 'guilt'}
 
     def forward(self, input_ids, attention_mask=None):
         x = self.embedding(input_ids)
@@ -41,6 +54,8 @@ class EmotionBiLSTM(torch.nn.Module):
 
         return x
 
+    def getMap(self):
+        return self.labelMap
 
 
 def inference(model, text, tokenizer):
@@ -57,53 +72,30 @@ def inference(model, text, tokenizer):
 
     output = model(input_ids=input_ids, attention_mask=attention_mask)
 
-    return labelMap.get(output.argmax(dim=1).item(), "Unknown Emotion")
-
-labelMap = {0: 'happiness',
-            1: 'neutral',
-            2: 'sadness',
-            3: 'surprise',
-            4: 'love',
-            5: 'fear',
-            6: 'confusion',
-            7: 'disgust',
-            8: 'desire',
-            9: 'shame',
-            10: 'sarcasm',
-            11: 'anger',
-            12: 'guilt'}
+    return output.argmax(dim=1).item()
 
 
-
-print("Downloading model...")
 
 try:
     # Load the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("model\\tokenizer")
+    tokenizer_path = "../../model/tokenizer"
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 except Exception as e:
     print(f"Error loading tokenizer: {e}")
 
 
-
-
-
 #Create instance of model
-model = EmotionBiLSTM(28996, 275, 64, 13)
+txtEmotionModel = EmotionBiLSTM(28996, 275, 64, 13)
 
 # Load the weights
 
 try:
 
-    model.load_state_dict(torch.load("model\\emotion_model.pt"))
-    model.eval()  # Set to evaluation mode
-
-    print("Model Download Successful!")
+    txtEmotionModel.load_state_dict(torch.load("../../model/emotion_model.pt"))
+    txtEmotionModel.eval()  # Set to evaluation mode
 
 except Exception as e:
     print(f"Error loading model weights: {e}")
-
-
-
 
 
 

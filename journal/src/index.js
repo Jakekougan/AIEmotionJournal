@@ -6,9 +6,27 @@ import reportWebVitals from './reportWebVitals';
 const el = document.querySelector('#root');
 const root = ReactDOM.createRoot(el);
 
-function NewEntryForm() {
+function NewEntry() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    fetch('http://localhost:5000/add_entry', {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log(data)
+      if (data.includes("Entry added successfully!")) {
+        root.render(<Home />);
+      } else {
+        alert("Failed to add entry.");
+      }
+    })
+  }
   return (
-    <form action="http://localhost:5000/form" method="POST">
+    <form onSubmit={handleSubmit}>
       <div>
         <h1>Create a New Journal Entry</h1>
       </div>
@@ -31,7 +49,7 @@ function Home() {
     <div>
       <h1>Welcome to the Journal App</h1>
       <div>
-        <button onClick={() => root.render(<NewEntryForm />)}>Create New Entry</button>
+        <button onClick={() => root.render(<NewEntry />)}>Create New Entry</button>
       </div>
       <div>
         <button onClick={() => root.render(<View />)}>View Entries</button>
@@ -68,7 +86,8 @@ function SignIn() {
     const formData = new FormData(event.target);
     fetch('http://localhost:5000/user_auth', {
       method: "POST",
-      body: formData
+      body: formData,
+      credentials: "include"
     })
     .then(response => response.text())
     .then(data => {
