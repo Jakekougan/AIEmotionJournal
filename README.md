@@ -1,7 +1,7 @@
-#AI Emotion Journal
+AI Emotion Journal
 A full-stack web application for journaling and emotion analysis, powered by AI and deep learning.
 
-#Features
+Features
 User Authentication: Secure account creation and login using Flask and MySQL.
 Journal Entries: Create, view, and manage personal journal entries via a React frontend.
 Emotion Detection: Analyze journal text using NLP models (PyTorch, TensorFlow, Hugging Face Transformers).
