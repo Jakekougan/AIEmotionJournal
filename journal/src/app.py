@@ -9,13 +9,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 import journal_db as jdb
 sys.path.append('../../model')
-import model
+from model import inference, txtEmotionModel, tokenizer
 
 
 server = Flask(__name__)
 
 server.config.update(dict(SECRET_KEY='development key'))
-CORS(server)
+CORS(server, supports_credentials=True)
 
 @server.route('/create_user', methods=['POST'])
 def create_user():
@@ -27,7 +27,7 @@ def create_user():
         return "Passwords do not match!"
     elif len(pwd) < 8:
         return "Password must be at least 8 characters long!"
-    elif not jdb.check_user_exists(email):
+    elif jdb.check_user_exists(email, pwd):
         return "User already exists!"
     elif not fname or not lname or not email or not pwd or not cpwd:
         return "Please fill out all fields!"
@@ -46,11 +46,23 @@ def user_auth():
     if check:
         session['logged_in'] = True
         session['user'] = email
+        print(session)
         return "User is authenticated!"
     else:
         return "Authentication failed! Username or password is incorrect."
 
 
+@server.route('/add_entry', methods=['POST'])
+def add_entry():
+    print(session)
+    if not session.get('logged_in'):
+        return "You are not logged in!"
+    user = session.get('user')
+    content = request.form.get('entry')
+    emotion = inference(txtEmotionModel, content, tokenizer)
+    print(user, content, emotion)
+    jdb.addEntry(user, content, emotion, datetime.datetime.now())
+    return "Entry added successfully!"
 
 
 
