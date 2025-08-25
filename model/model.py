@@ -18,19 +18,19 @@ class EmotionBiLSTM(torch.nn.Module):
 
         self.act = torch.nn.GELU()
 
-        self.labelMap = {0: 'happiness',
-                         1: 'neutral',
-                         2: 'sadness',
-                         3: 'surprise',
-                         4: 'love',
-                         5: 'fear',
-                         6: 'confusion',
-                         7: 'disgust',
-                         8: 'desire',
-                         9: 'shame',
-                         10: 'sarcasm',
-                         11: 'anger',
-                         12: 'guilt'}
+        self.labelMap = {0: 'Happiness',
+                         1: 'Neutral',
+                         2: 'Sadness',
+                         3: 'Surprise',
+                         4: 'Love',
+                         5: 'Fear',
+                         6: 'Confusion',
+                         7: 'Disgust',
+                         8: 'Desire',
+                         9: 'Shame',
+                         10: 'Sarcasm',
+                         11: 'Anger',
+                         12: 'Guilt'}
 
     def forward(self, input_ids, attention_mask=None):
         x = self.embedding(input_ids)
