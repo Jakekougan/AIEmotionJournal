@@ -78,4 +78,8 @@ def fetch_entries():
     entries = jdb.fetchEntries(user)
     if not entries:
         return "No entries found!"
+    for i in range(len(entries)):
+        entries[i] = list(entries[i])
+        entries[i][3] = txtEmotionModel.getMap()[entries[i][3]]
+        entries[i][4] = entries[i][4].strftime("%Y-%m-%d %H:%M:%S")
     return jsonify(entries)

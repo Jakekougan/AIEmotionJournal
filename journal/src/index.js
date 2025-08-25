@@ -65,6 +65,10 @@ function Home() {
 
 function View() {
   const [entries, setEntries] = React.useState([]);
+  const [selectedEntryId, setSelectedEntryId] = React.useState(null);
+  const handleSelectChange = (event) => {
+    setSelectedEntryId(event.target.value);
+  };
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -86,15 +90,26 @@ function View() {
   return (
     <div>
       <h1>View Entries</h1>
-      <select>
+      <select value={selectedEntryId || ""} onChange={handleSelectChange}>
         <option value="">Select an entry</option>
         {entries.map((entry) => (
-          console.log(entry),
-          <option key={entry[0]} value={entry[0]}>{entry[3]}</option>
+          <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
         ))}
       </select>
       <div>
         <button onClick={() => root.render(<Home />)}>Back to Home</button>
+      </div>
+      <div id="entry-emotion">
+        {selectedEntryId
+          ? ("Entry Emotion: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
+          : ""
+        }
+      </div>
+      <div>
+        {selectedEntryId
+          ? ("Entry Content: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
+          : ""
+        }
       </div>
     </div>
   )
