@@ -1,6 +1,6 @@
 import requests as req
 import sys
-from flask import Flask, request, url_for, redirect, flash, session
+from flask import Flask, jsonify, request, url_for, redirect, flash, session
 import requests as req
 from flask_cors import CORS
 import os
@@ -65,4 +65,17 @@ def add_entry():
     return "Entry added successfully!"
 
 
+@server.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return redirect("http://localhost:3000/")
 
+@server.route('/fetch_entries', methods=['POST'])
+def fetch_entries():
+    if not session.get('logged_in'):
+        return "You are not logged in!"
+    user = session.get('user')
+    entries = jdb.fetchEntries(user)
+    if not entries:
+        return "No entries found!"
+    return jsonify(entries)

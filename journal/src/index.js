@@ -64,14 +64,34 @@ function Home() {
 
 
 function View() {
+  const [entries, setEntries] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('http://localhost:5000/fetch_entries', {
+        method: "POST",
+        credentials: "include"
+      });
+      const data = await response.json();
+      console.log(data)
+      if (Array.isArray(data)) {
+        setEntries(data);
+      } else {
+        alert("Failed to fetch entries.");
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <h1>View Entries</h1>
       <select>
-        <option value="" disabled selected>Select an entry</option>
-        <option value="entry1">Entry 1</option>
-        <option value="entry2">Entry 2</option>
-        <option value="entry3">Entry 3</option>
+        <option value="">Select an entry</option>
+        {entries.map((entry) => (
+          console.log(entry),
+          <option key={entry[0]} value={entry[0]}>{entry[3]}</option>
+        ))}
       </select>
       <div>
         <button onClick={() => root.render(<Home />)}>Back to Home</button>
