@@ -3,6 +3,7 @@ import mysql.connector
 from dotenv import load_dotenv
 from werkzeug.security import check_password_hash, generate_password_hash
 
+
 load_dotenv()
 os.getenv("DBPWD")
 
@@ -48,9 +49,44 @@ def check_user_exists(email, password):
     return False
 
 
-def addEntry(user_id, entry_text):
+def addEntry(user, entry_text, emotion, date):
     connection = get_db_connection()
-    pass
+    cursor = connection.cursor()
+    udata = fetchUserData(user)
+    try:
+        cursor.execute("INSERT INTO entries (user, plaintext, label, date) VALUES (%s, %s, %s, %s)",
+                    (udata[0], entry_text, emotion, date))
+        connection.commit()
+    except mysql.connector.Error as err:
+        return err
+    finally:
+        close_db_connection(connection)
 
-def remove():
-    pass
+def fetchUserData(user):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("SELECT * FROM users WHERE email = %s", (user,))
+        user_data = cursor.fetchone()
+        if not user_data:
+            print("User not found!")
+            return
+        return user_data
+    except mysql.connector.Error as err:
+        return err
+
+def fetchEntries(user):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    user_id = fetchUserData(user)[0]
+    try:
+        cursor.execute("SELECT * FROM entries WHERE user = %s", (user_id,))
+        entries = cursor.fetchall()
+        if not entries:
+            print("No entries found!")
+            return
+        return entries
+    except mysql.connector.Error as err:
+        return err
+    finally:
+        close_db_connection(connection)

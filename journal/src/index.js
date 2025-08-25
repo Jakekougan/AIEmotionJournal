@@ -64,17 +64,52 @@ function Home() {
 
 
 function View() {
+  const [entries, setEntries] = React.useState([]);
+  const [selectedEntryId, setSelectedEntryId] = React.useState(null);
+  const handleSelectChange = (event) => {
+    setSelectedEntryId(event.target.value);
+  };
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('http://localhost:5000/fetch_entries', {
+        method: "POST",
+        credentials: "include"
+      });
+      const data = await response.json();
+      console.log(data)
+      if (Array.isArray(data)) {
+        setEntries(data);
+      } else {
+        alert("Failed to fetch entries.");
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
       <h1>View Entries</h1>
-      <select>
-        <option value="" disabled selected>Select an entry</option>
-        <option value="entry1">Entry 1</option>
-        <option value="entry2">Entry 2</option>
-        <option value="entry3">Entry 3</option>
+      <select value={selectedEntryId || ""} onChange={handleSelectChange}>
+        <option value="">Select an entry</option>
+        {entries.map((entry) => (
+          <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
+        ))}
       </select>
       <div>
         <button onClick={() => root.render(<Home />)}>Back to Home</button>
+      </div>
+      <div id="entry-emotion">
+        {selectedEntryId
+          ? ("Entry Emotion: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
+          : ""
+        }
+      </div>
+      <div>
+        {selectedEntryId
+          ? ("Entry Content: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
+          : ""
+        }
       </div>
     </div>
   )
