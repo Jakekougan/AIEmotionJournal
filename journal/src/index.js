@@ -20,6 +20,9 @@ function NewEntry() {
       console.log(data)
       if (data.includes("Entry added successfully!")) {
         root.render(<Home />);
+      } else if (data.includes("Entry contains sensitive content.")) {
+        alert("It seems you mentioned suicide. If you or someone you know is struggling, please reach out to someone who can help by calling or texting 988. For additional resources please visit https://988lifeline.org/. ");
+        root.render(<Home />);
       } else {
         alert("Failed to add entry.");
       }
@@ -188,7 +191,7 @@ function SignIn() {
 
 function CreateAcc() {
   return (
-    <div>
+    <div className='createAcc'>
       <form action="http://localhost:5000/create_user" method="POST">
         <h1>Create Account</h1>
         <div>

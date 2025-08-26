@@ -23,7 +23,7 @@ body {
 }
 
 .homePage h1 {
-  color: cadetblue;
+  color: rgb(58, 114, 142);
   border-bottom: 2px solid cadetblue;
   font-family: comic sans, cursive, sans-serif;
 
@@ -95,22 +95,35 @@ button:hover {
   border-radius: 5px;
 }
 
-/* Parent container */
-.entry-container {
-  text-align: center;
-}
-
 
 .entry-container {
-  width: auto;
   border: 1px solid #38e6b0;
   border-radius: 5px;
   padding: 10px;
   margin: 10px 0;
+  margin-left: 30px;
+  margin-right: 30px;
   font-size: 16px;
   font-family: Arial, sans-serif;
 
+}
 
+.entry-container > div {
+  margin-bottom: 1.5em; /* Adjust value as needed */
+}
+
+.createAcc {
+  text-align: center;
+  margin: 25px;
+}
+
+.createAcc input {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 400px;
 }
 
 code {
