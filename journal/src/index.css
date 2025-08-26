@@ -45,6 +45,10 @@ body {
   max-width: 400px;
 }
 
+.signIn h3 {
+  color: rgb(71, 71, 241);
+}
+
 
 button {
   margin: 30px;
@@ -124,6 +128,10 @@ button:hover {
   border-radius: 5px;
   width: 100%;
   max-width: 400px;
+}
+
+.createAcc h3 {
+  color: rgb(79, 79, 249);
 }
 
 code {
