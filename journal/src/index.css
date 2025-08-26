@@ -15,6 +15,104 @@ body {
   margin: 20px;
 }
 
+
+.homePage {
+  text-align: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.homePage h1 {
+  color: cadetblue;
+  border-bottom: 2px solid cadetblue;
+  font-family: comic sans, cursive, sans-serif;
+
+
+
+}
+
+.signIn {
+  text-align: center;
+  margin: 25px;
+}
+
+.signIn input {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 400px;
+}
+
+
+button {
+  margin: 30px;
+  background: linear-gradient(90deg, blue 0%, #38e6b0 100%);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #38e6b0 0%, blue 100%);
+  transform: scale(1.05);
+}
+
+.newEntryForm {
+  align-items: center;
+  margin: 20px;
+}
+
+.newEntryForm textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  width: 1000px;
+  height: 75px;
+}
+
+.viewEntries {
+  margin: 30px;
+  padding: 10px;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #38e6b0;
+  border-radius: 5px;
+}
+
+#entry-select {
+  margin: 10px 0;
+  padding: 5px;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+}
+
+/* Parent container */
+.entry-container {
+  text-align: center;
+}
+
+
+.entry-container {
+  width: auto;
+  border: 1px solid #38e6b0;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+
+
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

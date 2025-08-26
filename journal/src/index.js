@@ -26,7 +26,7 @@ function NewEntry() {
     })
   }
   return (
-    <form onSubmit={handleSubmit}>
+    <form className='newEntryForm' onSubmit={handleSubmit}>
       <div>
         <h1>Create a New Journal Entry</h1>
       </div>
@@ -46,7 +46,7 @@ function NewEntry() {
 
 function Home() {
   return (
-    <div>
+    <div className="homePage">
       <h1>Welcome to the Journal App</h1>
       <div>
         <button onClick={() => root.render(<NewEntry />)}>Create New Entry</button>
@@ -87,32 +87,61 @@ function View() {
     fetchData();
   }, []);
 
-  return (
-    <div>
-      <h1>View Entries</h1>
-      <select value={selectedEntryId || ""} onChange={handleSelectChange}>
-        <option value="">Select an entry</option>
-        {entries.map((entry) => (
-          <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
-        ))}
-      </select>
+
+  if (selectedEntryId) {
+
+    return (
       <div>
-        <button onClick={() => root.render(<Home />)}>Back to Home</button>
+        <div className="viewEntries">
+          <h1>View Entries</h1>
+          <select id="entry-select" value={selectedEntryId || ""} onChange={handleSelectChange}>
+            <option value="">Select an entry</option>
+            {entries.map((entry) => (
+              <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
+            ))}
+          </select>
+          <div>
+            <button onClick={() => root.render(<Home />)}>Back to Home</button>
+          </div>
+        </div>
+        <div className='entry-container'>
+          <div id="entry-emotion">
+            {selectedEntryId
+              ? ("Entry Emotion: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
+              : ""
+            }
+          </div>
+          <div id='entry-date'>
+            {selectedEntryId
+              ? ("Entry Date: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[4] || "No date available")
+              : ""
+            }
+          </div>
+          <div id="entry-content">
+              {selectedEntryId
+                ? (entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
+                : ""
+              }
+          </div>
+        </div>
       </div>
-      <div id="entry-emotion">
-        {selectedEntryId
-          ? ("Entry Emotion: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
-          : ""
-        }
+    )
+  } else {
+    return (
+      <div className="viewEntries">
+        <h1>View Entries</h1>
+        <select id='entry-select' value={selectedEntryId || ""} onChange={handleSelectChange}>
+          <option value="">Select an entry</option>
+          {entries.map((entry) => (
+            <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
+          ))}
+        </select>
+        <div>
+          <button onClick={() => root.render(<Home />)}>Back to Home</button>
+        </div>
       </div>
-      <div>
-        {selectedEntryId
-          ? ("Entry Content: " + entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
-          : ""
-        }
-      </div>
-    </div>
-  )
+    )
+  }
 }
 
 function SignIn() {
@@ -135,7 +164,7 @@ function SignIn() {
     })
   }
   return (
-    <div>
+    <div className="signIn">
       <form onSubmit={handleSubmit}>
         <h1>Sign In</h1>
         <div>
