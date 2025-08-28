@@ -108,8 +108,9 @@ def editEntry(user, entry_id, content, emotion):
 def deleteEntry(user, entry_id):
     connection = get_db_connection()
     cursor = connection.cursor()
+    user_id = fetchUserData(user)[0]
     try:
-        cursor.execute("DELETE FROM entries WHERE id = %s AND user = %s", (entry_id, user))
+        cursor.execute("DELETE FROM entries WHERE id = %s AND user = %s", (entry_id, user_id))
         connection.commit()
 
     except mysql.connector.Error as err:

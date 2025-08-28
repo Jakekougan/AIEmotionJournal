@@ -129,7 +129,7 @@ function View() {
             <button onClick={() => root.render(<EditEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Edit</button>
           </div>
           <div>
-            <button>Delete</button>
+            <button onClick={() => root.render(<DeleteEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Delete</button>
           </div>
       </div>
     )
@@ -203,6 +203,55 @@ function EditEntry({ entry }) {
     </form>
   );
 }
+
+function DeleteEntry({ entry }) {
+  const [entryID, setEntryID] = React.useState(entry?.[0] || "");
+  const [content, setContent] = React.useState(entry?.[2] || "");
+  const handleDelete = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("entryID", entryID);
+    fetch('http://localhost:5000/delete_entry', {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+    .then(response => response.text())
+    .then(data => {
+      if (data.includes("Entry deleted successfully!")) {
+        root.render(<Home />);
+      } else {
+        alert("Error deleting entry");
+      }
+    })
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <h1>Delete Entry</h1>
+      <div>
+        <label>Are you sure you want to delete this entry?</label>
+        <div>
+          <textarea
+          readOnly value={content}
+          onChange={(e) => setContent(e.target.value)}
+          ></textarea>
+        </div>
+        <input type="hidden"
+         name="entryID"
+         value={entryID}
+         onChange={(e) => setEntryID(e.target.value)}
+         ></input>
+      </div>
+      <div>
+        <button type="submit">Confirm</button>
+        <button type="button" onClick={() => root.render(<View />)}>Cancel</button>
+      </div>
+    </form>
+  )
+
+}
+
 
 
 
