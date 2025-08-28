@@ -62,6 +62,8 @@ def add_entry():
     emotion = inference(txtEmotionModel, content, tokenizer)
     print(user, content, emotion)
     jdb.addEntry(user, content, emotion, datetime.datetime.now())
+    if checkContent(content):
+        return "Entry contains sensitive content."
     return "Entry added successfully!"
 
 
@@ -83,3 +85,10 @@ def fetch_entries():
         entries[i][3] = txtEmotionModel.getMap()[entries[i][3]]
         entries[i][4] = entries[i][4].strftime("%Y-%m-%d %H:%M:%S")
     return jsonify(entries)
+
+
+def checkContent(content):
+    keywords = ['suicide', 'end my life', 'ending my life', 'kill myself', 'self harm']
+    if any(keyword in content.lower() for keyword in keywords):
+        return True
+    return False
