@@ -180,7 +180,7 @@ function SignIn() {
           <button type="submit">Sign In</button>
         </div>
         <div>
-          <h3>Don't have an account? <button onClick={() => root.render(<CreateAcc />)}>Sign Up</button></h3>
+          <h3>Don't have an account? <button id="sign-up-button" onClick={() => root.render(<CreateAcc />)}>Sign Up</button></h3>
         </div>
       </form>
 

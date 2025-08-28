@@ -49,10 +49,29 @@ body {
   color: rgb(71, 71, 241);
 }
 
+#sign-up-button {
+  background: linear-gradient(90deg, blue 100%);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+#sign-up-button:hover {
+  background: linear-gradient(90deg, #38e6b0 100%);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
 
 button {
   margin: 30px;
-  background: linear-gradient(90deg, blue 0%, #38e6b0 100%);
+  background: linear-gradient(90deg, #38e6b0 100%);
   border: none;
   border-radius: 5px;
   color: white;
@@ -62,7 +81,7 @@ button {
 }
 
 button:hover {
-  background: linear-gradient(90deg, #38e6b0 0%, blue 100%);
+  background: linear-gradient(90deg, blue 100%);
   transform: scale(1.05);
 }
 
@@ -138,3 +157,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333
+}
+
