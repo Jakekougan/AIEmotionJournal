@@ -17,7 +17,6 @@ function NewEntry() {
     })
     .then(response => response.text())
     .then(data => {
-      console.log(data)
       if (data.includes("Entry added successfully!")) {
         root.render(<Home />);
       } else if (data.includes("Entry contains sensitive content.")) {
@@ -80,7 +79,6 @@ function View() {
         credentials: "include"
       });
       const data = await response.json();
-      console.log(data)
       if (Array.isArray(data)) {
         setEntries(data);
       } else {
@@ -127,6 +125,12 @@ function View() {
               }
           </div>
         </div>
+        <div>
+            <button onClick={() => root.render(<EditEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Edit</button>
+          </div>
+          <div>
+            <button>Delete</button>
+          </div>
       </div>
     )
   } else {
@@ -146,6 +150,61 @@ function View() {
     )
   }
 }
+
+function EditEntry({ entry }) {
+  const [content, setContent] = React.useState(entry?.[2] || "");
+  const [entryID, setID] = React.useState(entry?.[0] || "");
+
+  const handleEdit = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("entryID", entryID);
+
+    fetch("http://localhost:5000/edit_entry", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        if (data.includes("Entry edited successfully!")) {
+          root.render(<Home />);
+        } else {
+          alert("Error saving entry changes");
+        }
+      });
+  };
+
+  if (!entry) return <div>Loading entry...</div>;
+
+  return (
+    <form onSubmit={handleEdit}>
+      <h1>Edit your Entry</h1>
+      <div>
+        <label>Emotion: {entry[3]}</label>
+        <input type="hidden"
+         name="entryID"
+         value={entryID}
+         onChange={(e) => setID(e.target.value)}
+         ></input>
+      </div>
+      <div>
+        <textarea
+          name="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        ></textarea>
+      </div>
+      <div>
+        <button type="submit">Confirm</button>
+        <button type="button" onClick={() => root.render(<View />)}>Cancel</button>
+      </div>
+    </form>
+  );
+}
+
+
 
 function SignIn() {
   const handleSubmit = (event) => {

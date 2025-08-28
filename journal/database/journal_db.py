@@ -90,3 +90,29 @@ def fetchEntries(user):
         return err
     finally:
         close_db_connection(connection)
+
+
+def editEntry(user, entry_id, content, emotion):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    user_id = fetchUserData(user)[0]
+    try:
+        cursor.execute("UPDATE entries SET plaintext = %s, label = %s WHERE id = %s AND user = %s",
+                       (content, emotion, entry_id, user_id))
+        connection.commit()
+    except mysql.connector.Error as err:
+        return err
+    finally:
+        close_db_connection(connection)
+
+def deleteEntry(user, entry_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("DELETE FROM entries WHERE id = %s AND user = %s", (entry_id, user))
+        connection.commit()
+
+    except mysql.connector.Error as err:
+        return err
+    finally:
+        close_db_connection(connection)

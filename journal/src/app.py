@@ -54,8 +54,8 @@ def user_auth():
 
 @server.route('/add_entry', methods=['POST'])
 def add_entry():
-    print(session)
-    if not session.get('logged_in'):
+    check = checkSession()
+    if not check:
         return "You are not logged in!"
     user = session.get('user')
     content = request.form.get('entry')
@@ -74,7 +74,8 @@ def logout():
 
 @server.route('/fetch_entries', methods=['POST'])
 def fetch_entries():
-    if not session.get('logged_in'):
+    loggedIn = checkSession()
+    if not loggedIn:
         return "You are not logged in!"
     user = session.get('user')
     entries = jdb.fetchEntries(user)
@@ -86,9 +87,36 @@ def fetch_entries():
         entries[i][4] = entries[i][4].strftime("%Y-%m-%d %H:%M:%S")
     return jsonify(entries)
 
+@server.route('/delete_entry', methods=['POST'])
+def delete_entry():
+    loggedIn = checkSession()
+    if not loggedIn:
+        return "You are not logged in!"
+    user = session.get('user')
+    entry_id = request.form.get('entry_id')
+    jdb.deleteEntry(user, entry_id)
+    return "Entry deleted successfully!"
+
+@server.route('/edit_entry', methods=['POST'])
+def edit_entry():
+    loggedIn = checkSession()
+    if not loggedIn:
+        return "You are not logged in!"
+    user = session.get('user')
+    entry_id = int(request.form.get('entryID'))
+    content = request.form.get('content')
+    emotion = inference(txtEmotionModel, content, tokenizer)
+    jdb.editEntry(user, entry_id, content, emotion)
+    return "Entry edited successfully!"
+
 
 def checkContent(content):
     keywords = ['suicide', 'end my life', 'ending my life', 'kill myself', 'self harm']
     if any(keyword in content.lower() for keyword in keywords):
         return True
     return False
+
+def checkSession():
+    if not session.get('logged_in'):
+        return False
+    return True
