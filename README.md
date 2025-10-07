@@ -1,28 +1,59 @@
-# AIEmotionJournal 
+# AI Emotion Journal
 
-Full-stack web application that allows users to journal their daily entries and have an AI model analyze the text to detect the user's emotions. The project features user authentication, journal entry management, and emotion detection capabilities.
+AI Emotion Journal is a web-based journaling application that leverages AI to analyze and track the emotional content of user journal entries. The app provides a simple interface for users to create, view, and manage their personal journal entries, with emotion analysis powered by a machine learning model.
 
-# Main Function Points
-1. User Authentication:
-   *  Secure account creation and login using Flask and MySQL
-2. Journal Entries:
-   * Create, view, and manage personal journal entries via a React frontend
-3. Emotion Detection:
-   * Analyze journal text using NLP models (PyTorch, TensorFlow, Hugging Face Transformers)
-4. AI Model Training:
-   * Jupyter notebooks for experimenting and training emotion classification models
-5. RESTful API:
-   * Flask backend provides endpoints for authentication, entry management, and emotion inference
-6. Frontend:
-   * Modern React UI for seamless user experience
+## Features
 
+- **User Authentication:** Secure sign-in and account creation for personalized journaling.
+- **Create Journal Entries:** Users can write and submit new entries through a user-friendly form.
+- **Emotion Analysis:** Each entry is analyzed by an AI model to detect and display the predominant emotion.
+- **View Past Entries:** Users can browse previous entries, view their content, associated emotion, and date.
+- **Database Storage:** Entries and user data are stored in a backend database for persistence.
 
-# Technology Stack
-* Python 3.10+
-* Node.js & npm
-* MySQL
-* Flask
-* React
-* PyTorch
-* TensorFlow
-* Hugging Face Transformers
+## Technology Stack
+
+- **Frontend:** React.js (JavaScript)
+- **Backend:** Flask (Python)
+- **Database:** SQLite
+- **AI Model:** PyTorch-based emotion classification
+
+## Folder Structure
+
+- `journal/` - Main application folder
+  - `src/` - React frontend source code
+  - `database/` - Database schema and Python DB logic
+  - `public/` - Static assets for the frontend
+- `model/` - AI model files and emotion analysis scripts
+  - `tokenizer/` - Tokenizer configuration for the model
+
+## Getting Started
+
+1. **Install Dependencies**
+   - Frontend: Navigate to `journal/src` and run `npm install`.
+   - Backend: Set up a Python virtual environment and install required packages (see `requirements.txt` if available).
+
+2. **Run the Application**
+   - Start the backend Flask server (usually on port 5000).
+   - Start the frontend React app with `npm start`.
+
+3. **Access the App**
+   - Open your browser and go to `http://localhost:3000` for the frontend.
+   - The backend API runs at `http://localhost:5000`.
+
+## Usage
+
+- **Sign In / Sign Up:** Create an account or log in to access your journal.
+- **Create Entry:** Write a new journal entry and submit. The AI will analyze the emotion.
+- **View Entries:** Browse your previous entries, see the detected emotion and entry date.
+
+## AI Emotion Analysis
+
+The application uses a PyTorch model to classify the emotion of each journal entry. The model and tokenizer files are located in the `model/` directory.
+
+## License
+
+This project is for educational and personal use. See LICENSE file for details if provided.
+
+## Contributing
+
+Pull requests and suggestions are welcome!
