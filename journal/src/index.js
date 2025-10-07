@@ -33,7 +33,7 @@ function NewEntry() {
         <h1>Create a New Journal Entry</h1>
       </div>
       <div>
-        <textarea name="entry" placeholder="Write your entry here..." />
+        <textarea id="entry-textarea" name="entry" placeholder="Write your entry here..." />
       </div>
       <div>
         <button type="submit">Submit</button>

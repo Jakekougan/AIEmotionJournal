@@ -7,15 +7,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: cadetblue;
 }
-
-.newEntryForm {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-}
-
-
 .homePage {
   text-align: center;
   align-items: center;
@@ -26,9 +17,6 @@ body {
   color: rgb(58, 114, 142);
   border-bottom: 2px solid cadetblue;
   font-family: comic sans, cursive, sans-serif;
-
-
-
 }
 
 .signIn {
@@ -36,6 +24,109 @@ body {
   margin: 25px;
 }
 
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+  color: #222;
+}
+
+.homePage, .signIn, .newEntryForm, .viewEntries, .entry-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 420px;
+  width: 100%;
+  transition: box-shadow 0.2s;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.homePage h1, .signIn h1, .newEntryForm h1, .viewEntries h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+  text-align: center;
+  align-items: center;
+}
+
+button {
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75em 1.5em;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0.5em 0.25em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #60a5fa 0%, #6366f1 100%);
+  transform: translateY(-2px) scale(1.04);
+}
+
+input[type="text"], input[type="password"], textarea {
+  width: 100%;
+  padding: 0.75em;
+  margin: 0.5em 0 1em 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f3f4f6;
+  transition: border 0.2s;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.entry-container > div {
+  margin-bottom: 1.5em;
+  padding: 1em;
+  background: #f3f4f6;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+}
+
+.entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+select {
+  width: 100%;
+  padding: 0.75em;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  font-size: 1rem;
+  margin-bottom: 1em;
+}
+
+@media (max-width: 600px) {
+  .homePage, .signIn, .newEntryForm, .viewEntries, .entry-container {
+    padding: 1rem;
+    max-width: 98vw;
+  }
+  .entry-container > div {
+    padding: 0.5em;
+  }
+}
 .signIn input {
   margin: 10px 0;
   padding: 10px;
@@ -85,11 +176,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-.newEntryForm {
-  align-items: center;
-  margin: 20px;
-}
-
 .newEntryForm textarea {
   width: 100%;
   margin: 10px 0;
@@ -100,15 +186,6 @@ button:hover {
   font-family: Arial, sans-serif;
   width: 1000px;
   height: 75px;
-}
-
-.viewEntries {
-  margin: 30px;
-  padding: 10px;
-  align-items: center;
-  text-align: center;
-  border: 1px solid #38e6b0;
-  border-radius: 5px;
 }
 
 #entry-select {
@@ -135,6 +212,17 @@ button:hover {
   margin-bottom: 1.5em; /* Adjust value as needed */
 }
 
+
+#entry-textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  height: 100px;
+}
 .createAcc {
   text-align: center;
   margin: 25px;
@@ -162,6 +250,5 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  color: #333
+  color: #333;
 }
-
