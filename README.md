@@ -14,7 +14,7 @@ AI Emotion Journal is a web-based journaling application that leverages AI to an
 
 - **Frontend:** React.js (JavaScript)
 - **Backend:** Flask (Python)
-- **Database:** SQLite
+- **Database:** MySQL
 - **AI Model:** PyTorch-based emotion classification
 
 ## Folder Structure
@@ -50,10 +50,3 @@ AI Emotion Journal is a web-based journaling application that leverages AI to an
 
 The application uses a PyTorch model to classify the emotion of each journal entry. The model and tokenizer files are located in the `model/` directory.
 
-## License
-
-This project is for educational and personal use. See LICENSE file for details if provided.
-
-## Contributing
-
-Pull requests and suggestions are welcome!
