@@ -93,7 +93,7 @@ def delete_entry():
     if not loggedIn:
         return "You are not logged in!"
     user = session.get('user')
-    entry_id = request.form.get('entry_id')
+    entry_id = request.form.get('entryID')
     jdb.deleteEntry(user, entry_id)
     return "Entry deleted successfully!"
 
