@@ -215,8 +215,8 @@ button:hover {
 
 #entry-textarea {
   width: 100%;
-  margin: 10px 0;
   padding: 10px;
+  margin-right: 200px;
   border: 1px solid cadetblue;
   border-radius: 5px;
   font-size: 16px;
