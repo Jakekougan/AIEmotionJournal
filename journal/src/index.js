@@ -94,43 +94,40 @@ function View() {
     return (
       <div>
         <div className="viewEntries">
-          <h1>View Entries</h1>
           <select id="entry-select" value={selectedEntryId || ""} onChange={handleSelectChange}>
             <option value="">Select an entry</option>
             {entries.map((entry) => (
               <option key={entry[0]} value={entry[0]}>{entry[4]}</option>
             ))}
           </select>
+          <div className='entry-container'>
+            <div id="entry-emotion">
+              {selectedEntryId
+                ? ("Entry Emotion: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
+                : ""
+              }
+            </div>
+            <div id='entry-date'>
+              {selectedEntryId
+                ? ("Entry Date: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[4] || "No date available")
+                : ""
+              }
+            </div>
+            <div id="entry-content">
+                {selectedEntryId
+                  ? (entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
+                  : ""
+                }
+            </div>
+            <div>
+              <button onClick={() => root.render(<EditEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Edit</button>
+              <button onClick={() => root.render(<DeleteEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Delete</button>
+            </div>
+          </div>
           <div>
             <button onClick={() => root.render(<Home />)}>Back to Home</button>
           </div>
         </div>
-        <div className='entry-container'>
-          <div id="entry-emotion">
-            {selectedEntryId
-              ? ("Entry Emotion: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[3] || "No emotion available")
-              : ""
-            }
-          </div>
-          <div id='entry-date'>
-            {selectedEntryId
-              ? ("Entry Date: \n" + entries.find(entry => entry[0] === Number(selectedEntryId))?.[4] || "No date available")
-              : ""
-            }
-          </div>
-          <div id="entry-content">
-              {selectedEntryId
-                ? (entries.find(entry => entry[0] === Number(selectedEntryId))?.[2] || "No content available")
-                : ""
-              }
-          </div>
-        </div>
-        <div>
-            <button onClick={() => root.render(<EditEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Edit</button>
-          </div>
-          <div>
-            <button onClick={() => root.render(<DeleteEntry entry={entries.find(entry => entry[0] === Number(selectedEntryId))} />)}>Delete</button>
-          </div>
       </div>
     )
   } else {

@@ -31,7 +31,7 @@ body {
   color: #222;
 }
 
-.homePage, .signIn, .newEntryForm, .viewEntries, .entry-container {
+.homePage, .signIn, .newEntryForm, .viewEntries {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
@@ -92,20 +92,6 @@ input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
 textarea {
   min-height: 120px;
   resize: vertical;
-}
-
-.entry-container > div {
-  margin-bottom: 1.5em;
-  padding: 1em;
-  background: #f3f4f6;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(99,102,241,0.04);
-}
-
-.entry-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5em;
 }
 
 select {
@@ -176,18 +162,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-.newEntryForm textarea {
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid cadetblue;
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  width: 1000px;
-  height: 75px;
-}
-
 #entry-select {
   margin: 10px 0;
   padding: 5px;
@@ -199,7 +173,7 @@ button:hover {
 .entry-container {
   border: 1px solid #38e6b0;
   border-radius: 5px;
-  padding: 10px;
+  padding: 25px;
   margin: 10px 0;
   margin-left: 30px;
   margin-right: 30px;
@@ -210,6 +184,16 @@ button:hover {
 
 .entry-container > div {
   margin-bottom: 1.5em; /* Adjust value as needed */
+}
+
+.entry-container #entry-date, #entry-emotion, #entry-content {
+  margin-bottom: 10px;
+  text-align: left;
+  align-items: left;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border-style: solid;
+  padding: 10px;
+
 }
 
 
