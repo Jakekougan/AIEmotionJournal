@@ -57,6 +57,9 @@ function Home() {
         <button onClick={() => root.render(<View />)}>View Entries</button>
       </div>
       <div>
+        <button onClick={() => root.render(<StatsPage />)}>View Statistics</button>
+      </div>
+      <div>
         <button onClick={() => root.render(<SignIn/>)}>Log Out</button>
       </div>
     </div>
@@ -199,6 +202,40 @@ function EditEntry({ entry }) {
       </div>
     </form>
   );
+}
+
+function StatsPage() {
+  return (
+    <form>
+
+
+      <div>
+        <select>
+          <option>Weekly</option>
+          <option>Month to Month</option>
+        </select>
+
+      </div>
+      <div>
+        <button onClick={() => root.render(<Home />)}>Back to Home</button>
+      </div>
+
+    </form>
+  )
+
+}
+
+function TestPage()  {
+  return (
+    <form>
+      <div>
+        <button type="submit">Check the time</button>
+      </div>
+      <div>
+        <button onClick={() => root.render(<Home/>)}>Return Home</button>
+      </div>
+    </form>
+  )
 }
 
 function DeleteEntry({ entry }) {

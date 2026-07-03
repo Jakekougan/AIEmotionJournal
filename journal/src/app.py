@@ -1,15 +1,18 @@
-import requests as req
 import sys
-from flask import Flask, jsonify, request, url_for, redirect, flash, session
-import requests as req
-from flask_cors import CORS
 import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
+sys.path.append('../../model')
+
+import requests as req
+from flask import Flask, jsonify, request, url_for, redirect, flash, session
+from flask_cors import CORS
 import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
-import journal_db as jdb
-sys.path.append('../../model')
+import journalDB as jdb
 from model import inference, txtEmotionModel, tokenizer
+import datetime
+import pandas as pd
 
 
 server = Flask(__name__)
@@ -47,6 +50,9 @@ def user_auth():
         session['logged_in'] = True
         session['user'] = email
         print(session)
+        unlocked = checkTime()
+        if not unlocked[0]:
+            return f"It has not been 24 hours since your last entry submission. Please come back in {unlocked[1]}"
         return "User is authenticated!"
     else:
         return "Authentication failed! Username or password is incorrect."
@@ -57,6 +63,11 @@ def add_entry():
     check = checkSession()
     if not check:
         return "You are not logged in!"
+
+    if not checkTime():
+        return "It is not time to journal yet. Come back in "
+
+
     user = session.get('user')
     content = request.form.get('entry')
     emotion = inference(txtEmotionModel, content, tokenizer)
@@ -120,3 +131,57 @@ def checkSession():
     if not session.get('logged_in'):
         return False
     return True
+
+def checkTime():
+    '''Checks the time of the most recent journal entry from the database.
+    Users are only allowed to submit an entry every 24 hours. If a user tries to do so before 24 hours since the last, the entry
+    is rejected.'''
+
+    currentTime = datetime.datetime.now()
+    try:
+        user = session.get('user')
+        entries = jdb.fetchEntries(user)
+        print(type(entries))
+
+        lastDate = entries[-1][-1]
+
+        timeDelta = currentTime - lastDate
+
+        hoursDif = timeDelta.total_seconds() / 3600
+        print(hoursDif)
+
+        if hoursDif < 24:
+            return False, hoursDif
+        else:
+            return True, hoursDif
+
+
+
+
+    except Exception as e:
+        print("no go partner", e)
+
+    finally:
+        print("I just wanted an excuse to use finally!")
+
+
+def changePWD(username, newPWD):
+    hashed = generate_password_hash(newPWD)
+    value = jdb.changePassword(username, hashed)
+
+    if value:
+        print("Password could not be changed")
+
+    else:
+        print("Password successfully changed!")
+
+
+
+def fetchLastEntry():
+    pass
+
+def stats():
+    pass
+
+
+#changePWD('jkougan@iwu.edu', "Gates108")
