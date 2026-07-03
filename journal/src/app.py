@@ -50,9 +50,6 @@ def user_auth():
         session['logged_in'] = True
         session['user'] = email
         print(session)
-        unlocked = checkTime()
-        if not unlocked[0]:
-            return f"It has not been 24 hours since your last entry submission. Please come back in {unlocked[1]}"
         return "User is authenticated!"
     else:
         return "Authentication failed! Username or password is incorrect."
@@ -132,6 +129,7 @@ def checkSession():
         return False
     return True
 
+@server.route('/checkTime', methods=["POST"])
 def checkTime():
     '''Checks the time of the most recent journal entry from the database.
     Users are only allowed to submit an entry every 24 hours. If a user tries to do so before 24 hours since the last, the entry
@@ -148,12 +146,11 @@ def checkTime():
         timeDelta = currentTime - lastDate
 
         hoursDif = timeDelta.total_seconds() / 3600
-        print(hoursDif)
 
         if hoursDif < 24:
-            return False, hoursDif
+            return jsonify({"result": "False", "hours": hoursDif})
         else:
-            return True, hoursDif
+            return jsonify({"result": "True", "hours": hoursDif})
 
 
 

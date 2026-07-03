@@ -27,7 +27,7 @@ function NewEntry() {
       }
     })
   }
-  return (
+    return (
     <form className='newEntryForm' onSubmit={handleSubmit}>
       <div>
         <h1>Create a New Journal Entry</h1>
@@ -45,13 +45,35 @@ function NewEntry() {
   )
 }
 
-
 function Home() {
+  // Only check journal timing when user attempts to create a new entry
+  const checkTimeAndOpenNewEntry = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/checkTime', {
+        method: 'POST',
+        credentials: 'include',
+        result: 'result',
+        timeLeft: 'hours'
+      });
+      const text = await response.text();
+      console.log(text);
+      if (text.includes('True')) {
+        root.render(<NewEntry />);
+      } else {
+        alert('It has not been 24 hours since your last entry submission. Please come back later');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error checking journal time. Please try again.');
+    }
+  }
+
+
   return (
     <div className="homePage">
       <h1>Welcome to the Journal App</h1>
       <div>
-        <button onClick={() => root.render(<NewEntry />)}>Create New Entry</button>
+        <button onClick={checkTimeAndOpenNewEntry}>Create New Entry</button>
       </div>
       <div>
         <button onClick={() => root.render(<View />)}>View Entries</button>
@@ -62,10 +84,10 @@ function Home() {
       <div>
         <button onClick={() => root.render(<SignIn/>)}>Log Out</button>
       </div>
+
     </div>
   )
 }
-
 
 
 function View() {
