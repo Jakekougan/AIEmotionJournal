@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
+const {hrsToHMS, decrementTime, sleep, decrementSec} = require('./time')
 const el = document.querySelector('#root');
 const root = ReactDOM.createRoot(el);
 
@@ -46,21 +47,39 @@ function NewEntry() {
 }
 
 function Home() {
+
+  const [items, setItems] = useState();
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/checkTime', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((data) => setItems(data))
+      .catch((err) => setError(err.meessage));
+    }, []);
   // Only check journal timing when user attempts to create a new entry
   const checkTimeAndOpenNewEntry = async () => {
     try {
       const response = await fetch('http://localhost:5000/checkTime', {
         method: 'POST',
         credentials: 'include',
-        result: 'result',
-        timeLeft: 'hours'
       });
       const text = await response.text();
-      console.log(text);
+      console.log(items.hours);
+      const time = hrsToHMS(items.hours);
       if (text.includes('True')) {
         root.render(<NewEntry />);
       } else {
-        alert('It has not been 24 hours since your last entry submission. Please come back later');
+        alert(`It has not been 24 hours since your last entry submission. Please come back in ${time}.`);
       }
     } catch (err) {
       console.error(err);

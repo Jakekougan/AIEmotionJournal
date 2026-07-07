@@ -147,6 +147,11 @@ def checkTime():
 
         hoursDif = timeDelta.total_seconds() / 3600
 
+        print(hoursDif)
+
+
+
+
         if hoursDif < 24:
             return jsonify({"result": "False", "hours": hoursDif})
         else:
@@ -165,8 +170,9 @@ def checkTime():
 def changePWD(username, newPWD):
     hashed = generate_password_hash(newPWD)
     value = jdb.changePassword(username, hashed)
+    print(value)
 
-    if value:
+    if not value:
         print("Password could not be changed")
 
     else:
@@ -181,4 +187,4 @@ def stats():
     pass
 
 
-#changePWD('jkougan@iwu.edu', "Gates108")
+changePWD('jkougan@iwu.edu', "Gates108")
