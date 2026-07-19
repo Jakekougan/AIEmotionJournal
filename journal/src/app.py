@@ -19,6 +19,11 @@ import math
 
 
 server = Flask(__name__)
+# allow requests from the React dev origin and allow cookies
+CORS(server, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+server.config['SESSION_COOKIE_SAMESITE'] = 'None'   # allow cross-site cookie
+server.config['SESSION_COOKIE_SECURE'] = False     # set to True in production with HTTPS
+server.config['CORS_HEADERS'] = 'Content-Type'
 
 server.config.update(dict(SECRET_KEY='development key'))
 CORS(server, supports_credentials=True)
@@ -192,6 +197,13 @@ def hrsRemainingToHMS(hours):
 
     return f"{hrs}:{mins}:{secs}"
 
+def fmtSeconstoHMS(seconds):
+    seconds = max(0, int(seconds))
+    hrs = seconds // 3600
+    mins = (seconds % 3600) // 60
+    secs = seconds % 60
+    return f"{hrs:02d}:{mins:02d}:{secs:02d}"
+
 def checkTimeLeft(user):
     '''Checks the time of the most recent journal entry from the database.
     Users are only allowed to submit an entry every 24 hours. If a user tries to do so before 24 hours since the last, the entry
@@ -200,27 +212,24 @@ def checkTimeLeft(user):
     currentTime = datetime.datetime.now()
     try:
         if not user:
-            return "False", "00:00:00"
+            return "False",0
 
         entries = jdb.fetchEntries(user)
         if not entries:
-            return "True", "00:00:00"
+            return "True", 0
 
         lastDate = entries[-1][-1]
         timeDelta = currentTime - lastDate
-        hoursDif = timeDelta.total_seconds() / 3600
+        elapsedSeconds = timeDelta.total_seconds()
+        totalWindow = 24 * 3600
+        remaining = max(0, totalWindow - elapsedSeconds)
 
-        displayTime = hrsRemainingToHMS(hoursDif)
-
-        print(displayTime)
-
-        if hoursDif < 24:
-            return "False", displayTime
-        return "True", displayTime
+        allowed = remaining == 0
+        return "True" if allowed else "False", int(remaining)
 
     except Exception as e:
         print("no go partner", e)
-        return "False", "00:00:00"
+        return "False", 0
 
 
 
@@ -229,21 +238,27 @@ def stream():
     user = session.get('user')
     status, timeSince = checkTimeLeft(user)
     def streamTime():
-        intervals = timeSince.split(":")
-        hrs = int(intervals[0])
-        mins = int(intervals[1])
-        secs = int(intervals[2])
-        while hrs >= 0:
-            yield f"{hrs}:{mins}:{secs}"
-            time.sleep(1)
-            secs -= 1
-            if secs == 1:
-                mins -= 1
-                secs = 60
 
-            elif mins == 1:
-                hrs -= 1
-                mins = 60
+        try:
+            rem = int(timeSince)
+            while rem > 0:
+                payload = {
+                    "value": fmtSeconstoHMS(rem),
+                    "remaining":rem,
+                    "allowed": status == "True"
+                }
+                yield f"data: {json.dumps(payload)}\n\n"
+                time.sleep(1)
+                rem -= 1
+
+
+
+            payload = {"value": "00:00:00", "remaining": 0, "allowed": True}
+            yield f"data: {json.dumps(payload)}\n\n"
+
+        except Exception as e:
+            print("No")
+
 
     return Response(streamTime(), mimetype="text/event-stream")
 
