@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'database'))
 sys.path.append('../../model')
 
 import requests as req
-from flask import Flask, jsonify, request, url_for, redirect, flash, session
+from flask import Flask, jsonify, request, url_for, redirect, flash, session, Response
 from flask_cors import CORS
 import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -13,6 +13,9 @@ import journalDB as jdb
 from model import inference, txtEmotionModel, tokenizer
 import datetime
 import pandas as pd
+import time
+import json
+import math
 
 
 server = Flask(__name__)
@@ -102,6 +105,8 @@ def delete_entry():
         return "You are not logged in!"
     user = session.get('user')
     entry_id = request.form.get('entryID')
+    if not entry_id:
+        return "No entry selected!"
     jdb.deleteEntry(user, entry_id)
     return "Entry deleted successfully!"
 
@@ -147,7 +152,13 @@ def checkTime():
 
         hoursDif = timeDelta.total_seconds() / 3600
 
+        print(hoursDif)
+
+
+
+
         if hoursDif < 24:
+            displayTime = hrsRemainingToHMS(hoursDif)
             return jsonify({"result": "False", "hours": hoursDif})
         else:
             return jsonify({"result": "True", "hours": hoursDif})
@@ -158,19 +169,88 @@ def checkTime():
     except Exception as e:
         print("no go partner", e)
 
-    finally:
-        print("I just wanted an excuse to use finally!")
-
-
 def changePWD(username, newPWD):
     hashed = generate_password_hash(newPWD)
     value = jdb.changePassword(username, hashed)
+    print(value)
 
-    if value:
+    if not value:
         print("Password could not be changed")
 
     else:
         print("Password successfully changed!")
+
+
+def hrsRemainingToHMS(hours):
+    remaining = 24 - int(hours)
+
+    totalSeconds = remaining * 3600
+
+    hrs = math.floor(totalSeconds / 3600)
+    mins = math.floor((totalSeconds % 3600) / 60)
+    secs =  totalSeconds% 60
+
+    return f"{hrs}:{mins}:{secs}"
+
+def checkTimeLeft(user):
+    '''Checks the time of the most recent journal entry from the database.
+    Users are only allowed to submit an entry every 24 hours. If a user tries to do so before 24 hours since the last, the entry
+    is rejected.'''
+
+    currentTime = datetime.datetime.now()
+    try:
+        if not user:
+            return "False", "00:00:00"
+
+        entries = jdb.fetchEntries(user)
+        if not entries:
+            return "True", "00:00:00"
+
+        lastDate = entries[-1][-1]
+        timeDelta = currentTime - lastDate
+        hoursDif = timeDelta.total_seconds() / 3600
+
+        displayTime = hrsRemainingToHMS(hoursDif)
+
+        print(displayTime)
+
+        if hoursDif < 24:
+            return "False", displayTime
+        return "True", displayTime
+
+    except Exception as e:
+        print("no go partner", e)
+        return "False", "00:00:00"
+
+
+
+@server.route("/stream")
+def stream():
+    user = session.get('user')
+    status, timeSince = checkTimeLeft(user)
+    def streamTime():
+        intervals = timeSince.split(":")
+        hrs = int(intervals[0])
+        mins = int(intervals[1])
+        secs = int(intervals[2])
+        while hrs >= 0:
+            yield f"{hrs}:{mins}:{secs}"
+            time.sleep(1)
+            secs -= 1
+            if secs == 1:
+                mins -= 1
+                secs = 60
+
+            elif mins == 1:
+                hrs -= 1
+                mins = 60
+
+    return Response(streamTime(), mimetype="text/event-stream")
+
+
+
+
+
 
 
 
