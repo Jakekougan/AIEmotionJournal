@@ -30,6 +30,11 @@ CORS(server, supports_credentials=True)
 
 @server.route('/create_user', methods=['POST'])
 def create_user():
+    '''Request handler to handle creating user accounts.
+
+    Takes the first and last names, email, password and confirmation of password from the front end, adds a new
+    entry into the users database for that new user, returns a redirect to the sign in page.'''
+
     fname, lname = request.form.get('fname'), request.form.get('lname')
     email = request.form.get('email')
     pwd = request.form.get('password')
@@ -51,13 +56,17 @@ def create_user():
 
 @server.route('/user_auth', methods=['POST'])
 def user_auth():
+    '''Request handler for validating a user trying to sign in has an account. Will help determine if a user is signed to allow for navigation
+    to the landing page.
+
+    takes the email and the password from the frontend, checks if the user exists in the users table.
+    If the user exists, return message that user is authenticated. If not send a failure message as a string.  '''
     email = request.form.get('email')
     password = request.form.get('password')
     check = jdb.check_user_exists(email, password)
     if check:
         session['logged_in'] = True
         session['user'] = email
-        print(session)
         return "User is authenticated!"
     else:
         return "Authentication failed! Username or password is incorrect."
@@ -65,10 +74,21 @@ def user_auth():
 
 @server.route('/add_entry', methods=['POST'])
 def add_entry():
+    '''Request handler to add a journal entry into the entries table of the database.
+
+    takes the user, and entry content from the frontend, passes the content into the model for inference, takes the current
+    date and time, and passes it all into the entries table of the database. Finally return response as a string.
+
+    If entry was successfully added return success message. If entry could not be return error message.
+
+    Will also check for any language that could indicate self-harm or suicidal ideation.'''
+
+    #check if user is signed in
     check = checkSession()
     if not check:
         return "You are not logged in!"
 
+    #Check if it has been 24 hours since the last submitted journal entry. If not return error message.
     if not checkTime():
         return "It is not time to journal yet. Come back in "
 
@@ -76,8 +96,9 @@ def add_entry():
     user = session.get('user')
     content = request.form.get('entry')
     emotion = inference(txtEmotionModel, content, tokenizer)
-    print(user, content, emotion)
     jdb.addEntry(user, content, emotion, datetime.datetime.now())
+
+    #Check for any content that could indicate thoughts of self harm or suicide
     if checkContent(content):
         return "Entry contains sensitive content."
     return "Entry added successfully!"
@@ -85,18 +106,29 @@ def add_entry():
 
 @server.route('/logout', methods=['GET'])
 def logout():
+    '''request handler, called when the user logsout, clears sessions and returns user to login page.'''
     session.clear()
     return redirect("http://localhost:3000/")
 
 @server.route('/fetch_entries', methods=['POST'])
 def fetch_entries():
+    '''request handler to grab all of a users entries from the entries table. Returns them in json format to the front end.
+
+    Used when a user navigats to the view entires page of the app. '''
+
+    #Check if the user is logged in
     loggedIn = checkSession()
     if not loggedIn:
         return "You are not logged in!"
+
+    #fetch the signed in user's entries
     user = session.get('user')
     entries = jdb.fetchEntries(user)
+
     if not entries:
         return "No entries found!"
+
+    #iterate through the fetched entries and seperate the individual items in the sublist by entry, emotion, and datetime
     for i in range(len(entries)):
         entries[i] = list(entries[i])
         entries[i][3] = txtEmotionModel.getMap()[entries[i][3]]
@@ -105,27 +137,24 @@ def fetch_entries():
 
 @server.route('/delete_entry', methods=['POST'])
 def delete_entry():
+    '''request handler called when a user wants to delete an entry.
+
+    If the entry does not exist, return error message. If entry does exist, return success message.'''
+
+    #Check if user is logged in
     loggedIn = checkSession()
     if not loggedIn:
         return "You are not logged in!"
+
     user = session.get('user')
     entry_id = request.form.get('entryID')
+
+    #check if there is actually an entry to delete
     if not entry_id:
         return "No entry selected!"
+
     jdb.deleteEntry(user, entry_id)
     return "Entry deleted successfully!"
-
-@server.route('/edit_entry', methods=['POST'])
-def edit_entry():
-    loggedIn = checkSession()
-    if not loggedIn:
-        return "You are not logged in!"
-    user = session.get('user')
-    entry_id = int(request.form.get('entryID'))
-    content = request.form.get('content')
-    emotion = inference(txtEmotionModel, content, tokenizer)
-    jdb.editEntry(user, entry_id, content, emotion)
-    return "Entry edited successfully!"
 
 
 def checkContent(content):
