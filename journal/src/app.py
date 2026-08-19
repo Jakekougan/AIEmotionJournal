@@ -158,12 +158,28 @@ def delete_entry():
 
 
 def checkContent(content):
+    '''Helper function that checks journal entries for any words that indicate self harm or suicidal ideation.
+
+    Parameters:
+        Content (str): the text of the submitted journal entry
+
+    Returns:
+        True if one of the keywords is found in the entry
+        False if no keywords are found in the entry'''
     keywords = ['suicide', 'end my life', 'ending my life', 'kill myself', 'self harm']
     if any(keyword in content.lower() for keyword in keywords):
         return True
     return False
 
 def checkSession():
+    '''Helper function to check if the user is logged in, returning a boolean value
+
+    Parameters:
+        None:
+
+    Returns:
+        True if user is signed in
+        False if user is not logged in'''
     if not session.get('logged_in'):
         return False
     return True
@@ -178,17 +194,14 @@ def checkTime():
     try:
         user = session.get('user')
         entries = jdb.fetchEntries(user)
-        print(type(entries))
 
+        #grab the date of the most recent entry
         lastDate = entries[-1][-1]
 
         timeDelta = currentTime - lastDate
 
+        #convert the timeDelta value from seconds to hours
         hoursDif = timeDelta.total_seconds() / 3600
-
-        print(hoursDif)
-
-
 
 
         if hoursDif < 24:
@@ -198,12 +211,19 @@ def checkTime():
             return jsonify({"result": "True", "hours": hoursDif})
 
 
-
-
     except Exception as e:
         print("no go partner", e)
 
 def changePWD(username, newPWD):
+    '''helper function to change a user's password
+
+    Parameters:
+        username (str): the user whose password will be changed
+        newPWD (str): the new password for the user
+
+    Returns:
+        None
+    '''
     hashed = generate_password_hash(newPWD)
     value = jdb.changePassword(username, hashed)
     print(value)
@@ -216,6 +236,13 @@ def changePWD(username, newPWD):
 
 
 def hrsRemainingToHMS(hours):
+    '''converts total hours to a hrs:mins:secs format
+
+    Parameters:
+        hours (string): An amount of hours
+
+    Returns:
+        a string in the format hrs:mins:secs'''
     remaining = 24 - int(hours)
 
     totalSeconds = remaining * 3600
@@ -227,6 +254,7 @@ def hrsRemainingToHMS(hours):
     return f"{hrs}:{mins}:{secs}"
 
 def fmtSeconstoHMS(seconds):
+    '''converts total seconds to hrs:mins:secs format'''
     seconds = max(0, int(seconds))
     hrs = seconds // 3600
     mins = (seconds % 3600) // 60
@@ -264,19 +292,34 @@ def checkTimeLeft(user):
 
 @server.route("/stream")
 def stream():
+    '''server route used to handle the live countdown on the landing page of how much time is left before the user can submit another entry.
+
+    Returns:
+        A response object with the streamTime() function inside to pass to the front end.'''
     user = session.get('user')
     status, timeSince = checkTimeLeft(user)
     def streamTime():
+        '''live countdown of how much time is left until the user can submit another entry, yielding the result each second, before repeating.
+
+        Parameters:
+            None
+
+        Returns:
+            Yields the remaining time left inside a json payload'''
 
         try:
             rem = int(timeSince)
+
             while rem > 0:
+                #Creating a payload to send data to the front end
                 payload = {
                     "value": fmtSeconstoHMS(rem),
                     "remaining":rem,
                     "allowed": status == "True"
                 }
                 yield f"data: {json.dumps(payload)}\n\n"
+
+                #Only decrement the timer ever second
                 time.sleep(1)
                 rem -= 1
 
